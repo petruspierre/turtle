@@ -5,12 +5,10 @@
 #define FRENTE 2
 
 void noventaDireita(){
-  desenhaHeader();
-  desenhaSeta(ESQUERDA);
   debugCores();
-  Serial.println("90 direita");
-  mini.digitalWireWrite(PROMINI_ADDR, ledEsq, HIGH);
-  mini.digitalWireWrite(PROMINI_ADDR, ledDir, LOW);
+  debugAcao("90 direita");
+  debugLED(DIREITA);
+  
   andaComEncoder(7);
   direita();
   s2 = analogRead(pinos2);
@@ -18,16 +16,14 @@ void noventaDireita(){
     s2 = analogRead(pinos2);
     delay(2);
   } 
-  mini.digitalWireWrite(PROMINI_ADDR, ledEsq, LOW);
-  mini.digitalWireWrite(PROMINI_ADDR, ledDir, LOW);
+  
+  debugLED(FRENTE);
 }
 
 void noventaEsquerda(){
-  desenhaHeader();
-  desenhaSeta(ESQUERDA);
-  Serial.println("90 esquerda");
-  mini.digitalWireWrite(PROMINI_ADDR, ledEsq, LOW);
-  mini.digitalWireWrite(PROMINI_ADDR, ledDir, HIGH);
+  debugAcao("90 esquerda");
+  debugLED(ESQUERDA);
+  
   andaComEncoder(7);
   esquerda();
   s1 = analogRead(pinos1);
@@ -35,16 +31,14 @@ void noventaEsquerda(){
     s1 = analogRead(pinos1);
     delay(2);
   }
-  mini.digitalWireWrite(PROMINI_ADDR, ledEsq, LOW);
-  mini.digitalWireWrite(PROMINI_ADDR, ledDir, LOW);
+  
+  debugLED(FRENTE);
 }
 
 void verdeDireita(){
-  desenhaHeader();
-  desenhaSeta(DIREITA);
-  Serial.println("verde direita");
-  mini.digitalWireWrite(PROMINI_ADDR, ledEsq, HIGH);
-  mini.digitalWireWrite(PROMINI_ADDR, ledDir, LOW);
+  debugAcao("verde direita");
+  debugLED(DIREITA);
+  
   andaComEncoder(7);
   direita();
   delay(300);
@@ -53,16 +47,14 @@ void verdeDireita(){
     s2 = analogRead(pinos2);
     delay(2);
   }
-  mini.digitalWireWrite(PROMINI_ADDR, ledEsq, LOW);
-  mini.digitalWireWrite(PROMINI_ADDR, ledDir, LOW);
+  
+  debugLED(FRENTE);
 }
 
 void verdeEsquerda(){
-  desenhaHeader();
-  desenhaSeta(ESQUERDA);
-  Serial.println("verde esquerda");
-  mini.digitalWireWrite(PROMINI_ADDR, ledEsq, LOW);
-  mini.digitalWireWrite(PROMINI_ADDR, ledDir, HIGH);
+  debugAcao("verde esquerda");
+  debugLED(ESQUERDA);
+  
   andaComEncoder(7);
   esquerda();
   delay(300);
@@ -71,14 +63,14 @@ void verdeEsquerda(){
     s1 = analogRead(pinos1);
     delay(2);
   }
-  mini.digitalWireWrite(PROMINI_ADDR, ledEsq, LOW);
-  mini.digitalWireWrite(PROMINI_ADDR, ledDir, LOW);
+ 
+  debugLED(FRENTE);
 }
 
 void becoSemSaida(){
-  mini.digitalWireWrite(PROMINI_ADDR, ledEsq, HIGH);
-  mini.digitalWireWrite(PROMINI_ADDR, ledDir, HIGH);
-  Serial.println("beco");
+  debugAcao("Beco sem saída");
+  debugLED(-1);
+  
   direita();
   delay(750);
   s2 = analogRead(pinos2);
@@ -86,6 +78,6 @@ void becoSemSaida(){
     s2 = analogRead(pinos2);
     delay(2);
   }
-  mini.digitalWireWrite(PROMINI_ADDR, ledEsq, LOW);
-  mini.digitalWireWrite(PROMINI_ADDR, ledDir, LOW);
+  
+  debugLED(FRENTE);
 }

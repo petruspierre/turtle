@@ -4,27 +4,17 @@
 #define DIREITA 1
 #define FRENTE 2
 
+double menuAtual = 0.1;
+
 void debug(String x){
   Serial.println(x);
 }
 
-void debugOLED(byte x, byte y, String msg){
-  oled.drawString(x,y,msg.c_str());
-}
-
-void desenhaSeta(int dir){
-  oled.setFont(u8x8_font_open_iconic_arrow_4x4);
-  switch(dir){
-    case ESQUERDA:
-      oled.drawGlyph(0, 3, '@'+1);
-      break;
-    case FRENTE:
-      oled.drawGlyph(6, 2, '@'+3);
-      break;
-    case DIREITA:
-      oled.drawGlyph(12, 3, '@'+2);
-      break;
-  }
+void debugOLED(byte x, byte y, String msg, int _size){
+  oled.clear();
+  oled.setFontSize(_size);
+  oled.setCursor(x,y);
+  oled.println(msg.c_str());
 }
 
 void debugCores(){   
@@ -47,30 +37,17 @@ void debugCores(){
   Serial.print(int(coresDireita[2]));
   Serial.print(" M = ");
   Serial.println(mcd);
-
-  oled.setFont(u8x8_font_amstrad_cpc_extended_f);    
-  oled.drawString(0,2, "Leitura: ");
-  oled.setFont(u8x8_font_courB18_2x3_f);    
-  String msg = (String(mce) + "|" + String(mcd));
-  oled.drawString(0,4, "                ");
-  oled.drawString(0,4, msg.c_str()); 
 }
 
 void debugCalibracao(){
-    oled.setFont(u8x8_font_chroma48medium8_r);
-    oled.drawString(0,3, "Branco: ");  
-
-    String msg = (String(int(calibBrancoEsquerda[0])) + "," + String(int(calibBrancoEsquerda[1])) + "," + String(int(calibBrancoEsquerda[2])));
-    oled.drawString(0,4, msg.c_str());
-
-    oled.drawString(0,6, "Preto: ");
-
-    msg = (String(int(calibPretoEsquerda[0])) + "," + String(int(calibPretoEsquerda[1])) + "," + String(int(calibPretoEsquerda[2])));
-    oled.drawString(0,7, msg.c_str());
-
     Serial.println(String(int(calibBrancoEsquerda[0])) + "," + String(int(calibBrancoEsquerda[1])) + "," + String(int(calibBrancoEsquerda[2])));
     Serial.println(String(int(calibPretoEsquerda[0])) + "," + String(int(calibPretoEsquerda[1])) + "," + String(int(calibPretoEsquerda[2])));
-    
+}
+
+void debugAcao(String msg){
+  Serial.println("Ação realizada:");
+  Serial.println(msg);
+  Serial.println();
 }
 
 void debugTCRT(){
@@ -85,6 +62,10 @@ void debugTCRT(){
   Serial.print(" ");
   Serial.println(s2);
   Serial.println("\n\n\n");
+}
+
+void printarEncoder(){
+  debug(String("- E: ") +  String(encoder2.read()) + String(" D:") + String(encoder.read()));
 }
 
 void debugLED(int lado){

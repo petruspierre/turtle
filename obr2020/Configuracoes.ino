@@ -9,21 +9,15 @@
 #define FRENTE 2
 
 // INSTANCIAÇÕES
-Encoder encoder(18, 22);
-Encoder encoder2(19, 23);
-U8X8_SSD1306_128X64_NONAME_HW_I2C oled(U8X8_PIN_NONE);
-
+A2a mini;
+LCD_SSD1306 oled;
 MPU6050 giro(Wire);
 
-AF_DCMotor mEsq(2);
-AF_DCMotor mDir(3);
-
-// PINAGEM
-
-
+/// PINAGEM
 //            13
 //      09          14
 //      10  11  12  15  
+
 int s1, s2, s3, s4, s5;
 int pinos1 = A11, pinos2 = A12, pinos3 = A13, pinos4 = A9, pinos5 = A14;
 int pinoLeds[] = {51,52,53};
@@ -51,68 +45,44 @@ float cinzaDifEsquerda = 0, cinzaDifDireita = 0;
 
 int mediaLeituras;
 
+int Y;
+
+// FUNÇÕES
+
 void configuracaoInicial(){
   
   configuraOLED();
-  //configuraGyro();
+  configuraGiro();
   configuraSensores();
   mini.begin();
 
   mini.pinWireMode(PROMINI_ADDR, ledEsq, OUTPUT);
   mini.pinWireMode(PROMINI_ADDR, ledDir, OUTPUT);
 
-  mEsq.setSpeed(115);
-  mDir.setSpeed(115);
 }
 
 //                    OLED                    //
 
 void configuraOLED(){
   oled.begin();
-  oled.setPowerSave(0);
-}
-
-void desenhaBarra(uint8_t c, uint8_t is_inverse){  
-  uint8_t r;
-  oled.setInverseFont(is_inverse);
-  for( r = 0; r < oled.getRows(); r++ )
-  {
-    oled.setCursor(c, r);
-    oled.print(" ");
-  }
-}
-
-void limpaTelaComBarra(){
-  oled.setFont(u8x8_font_chroma48medium8_r);
-  desenhaBarra(0, 1);
-  for(uint8_t c = 1; c < oled.getCols(); c++ )
-  {
-    desenhaBarra(c, 1);
-    desenhaBarra(c-1, 0);
-    delay(50);
-  }
-  desenhaBarra(oled.getCols()-1, 0);
-}
-
-void desenhaHeader(){
-  oled.setFont(u8x8_font_amstrad_cpc_extended_f);    
-  oled.clear();
-  oled.inverse();
-  oled.print("   IFPB ALPHA   ");
-  oled.noInverse();
 }
 
 //                   MPU6050                  //
 
-void configuraGyro(){
-  Wire.begin();
+void configuraGiro(){
   giro.begin();
-  giro.calcGyroOffsets(false);
+  giro.setGyroOffsets(0.43, 0.93, -2.65);
+}
+
+void atualizaGiroscopio(){
+  giro.update();
+  Y = giro.getAngleY() * -1;
 }
 
 // SENSORES
 
 void configuraSensores(){
+  
   pinMode(pinoLeds[0], OUTPUT);// LED VERMELHO
   pinMode(pinoLeds[1], OUTPUT);// LED VERDE
   pinMode(pinoLeds[2], OUTPUT);// LED AZUL
@@ -125,6 +95,8 @@ void configuraSensores(){
 
   pinMode(sCorEsquerda, INPUT);
   pinMode(sCorDireita, INPUT);
+
+  checaCalibracao();
 
 }
 
@@ -172,37 +144,11 @@ void calibracaoCor(){
 
 //                   MOTORES                  //
 
-void andaComEncoder(int cm){
-
-  mEsq.setSpeed(245);
-  mDir.setSpeed(255);
-  
-  for(int i = 0; i < cm; i++){
-    
-    frente();
-    debug("---=== ENCODER ===---");
-    
-    while (encoder2.read() <= 40 and encoder.read() <= 40) {
-      printarEncoder();
-    }
-    
-    parar();
-    debug(String("--- Contagem final de pulsos: E: ") + String(encoder2.read()) + String(" D:") + String(encoder.read()));
-    resetEncoder();
-  }
-  mEsq.setSpeed(120);
-  mDir.setSpeed(120);
-  
-}
-
-void printarEncoder(){
-  debug(String("- E: ") +  String(encoder2.read()) + String(" D:") + String(encoder.read()));
-}
-
 void resetEncoder(){
   encoder.write(0);
   encoder2.write(0);
 }
+
 void frente() {
   mEsq.setSpeed(130);
   mDir.setSpeed(125);
