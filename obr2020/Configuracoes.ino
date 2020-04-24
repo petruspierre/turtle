@@ -13,6 +13,8 @@ A2a mini;
 LCD_SSD1306 oled;
 MPU6050 giro(Wire);
 
+Chrono leituraGiro;
+
 /// PINAGEM
 //            13
 //      09          14
@@ -77,6 +79,12 @@ void configuraGiro(){
 void atualizaGiroscopio(){
   giro.update();
   Y = giro.getAngleY() * -1;
+
+  if(leituraGiro.hasPassed(100)){
+    if(Y > 100){
+      rampa = true;
+    }
+  }
 }
 
 // SENSORES

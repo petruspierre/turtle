@@ -8,6 +8,8 @@
 #include <MPU6050_tockn.h>
 #include <AFMotor.h>
 
+boolean rampa = false;
+
 void  setup () {
 
   Serial.begin(9600);
@@ -19,6 +21,6 @@ void  loop () {
 
   atualizaGiroscopio();
   lerTCRT();
-  verificaFaixa();
+  if(!rampa) verificaFaixa();
   
 }
